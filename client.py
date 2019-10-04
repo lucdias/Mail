@@ -1,4 +1,11 @@
+import platform
+import os
 import socket
+
+if platform.system() == 'Linux':
+	os.system("bash folders.sh")
+elif platform.system() == 'Windows':
+	os.system("folders.bat")
 
 class Client:
 	message = []
