@@ -31,7 +31,7 @@ class Server:
 		tempMsg = msg[0:constant.HEADERSIZE]
 		command = tempMsg.split()
 		if command[0] == "SEND":
-			self.handleSend(command[1], command[2], msg[15:len(msg)])
+			self.handleSend(command[2], command[1], msg[15:len(msg)])
 		elif command[0] == "GET":
 			self.handleGet(command[1])
 
@@ -45,16 +45,25 @@ class Server:
 
 	def handleGet(self, user):
 		path = f"SRmail/{user}/"
-		with os.scandir(path) as it:
-			for entry in it:
-				if entry.is_file():
-					try:
-						fMsg = open(path + entry.name, "r")
-						#os.system(f"rm {path + entry.name}")
-					except:
-						print("erro ao enviar arquivo")
-					self.sendMsg(fMsg.read())
-
+		try:
+			with os.scandir(path) as it:
+				sum = 0
+				for entry in it:
+					sum += 1
+					if entry.is_file():
+						try:
+							fMsg = open(path + entry.name, "r")
+							self.sendMsg(fMsg.read())
+							fMsg.close()
+							#os.system(f"rm {path + entry.name}")
+						except:
+							print("erro ao enviar arquivo")
+				if sum <= 0:
+					self.sendMsg("zero emails")
+		except FileNotFoundError:
+			os.system(f"mkdir {path}")
+			self.handleGet(user)
+	
 	
 	def sendMsg(self, msg):
 			self.sock.sendto(bytes(msg, encoding='utf8'), self.getClientAddress())
