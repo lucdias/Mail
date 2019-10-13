@@ -1,4 +1,3 @@
-echo Welcome to the mail
 if [ $1 == client ]
 then
 	folder=$(pwd)/Rmail
