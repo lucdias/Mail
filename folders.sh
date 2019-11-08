@@ -1,10 +1,19 @@
-echo Welcome to the mail
-folder=$(pwd)/Rmail
-if [ -d "$folder" ]
+if [ $1 == client ]
 then
-    echo Pasta de email existe
+	folder=$(pwd)/Rmail
+	if [ -d "$folder" ]
+	then
+		:
+	else
+		mkdir Rmail
+		mkdir Rmail/CaixaPostal Rmail/Lixo
+	fi
 else
-    mkdir Rmail
-    mkdir Rmail/CaixaPostal Rmail/Lixo
-    echo Criando pasta \do diretorio
+	folder=$(pwd)/SRmail
+	if [ -d "$folder" ]
+	then
+		:
+	else
+		mkdir SRmail
+	fi
 fi
