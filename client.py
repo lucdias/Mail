@@ -42,3 +42,4 @@ class Client:
 		(msg, addr) = self.sock.recvfrom(2048)
 		return msg.decode("utf-8")
 		
+		
