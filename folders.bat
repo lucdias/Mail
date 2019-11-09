@@ -1,9 +1,12 @@
 @ECHO OFF
-ECHO Welcome to the mail
-IF EXIST Rmail (
-    ECHO Pasta de email existe
+IF %1 == client (
+	IF NOT EXIST Rmail (
+	    mkdir Rmail
+	    mkdir Rmail\CaixaPostal Rmail\Lixo
+	    ECHO Criando pasta do diretorio
+	)
 ) ELSE (
-    mkdir Rmail
-    mkdir Rmail\CaixaPostal Rmail\Lixo
-    ECHO Criando pasta do diretorio
+	IF NOT EXIST SRmail (
+	    mkdir SRmail
+	)
 )
