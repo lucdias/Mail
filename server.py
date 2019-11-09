@@ -12,12 +12,19 @@ os.system(constant.folders + " server")
 class Server:
 	serverPort = 7777
 	clientAddress = None
-	def __init__(self, sock = None):
+	dnsAddress = None
+	def __init__(self, sock = None, dnsSock = None):
 		if sock is None:
 			self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 			self.sock.bind((socket.gethostname(), self.serverPort))
 		else:
 			self.sock = sock
+   
+
+		if dnsSock is None:
+			self.dnsSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+		else:
+			self.dnsSock = dnsSock
 
 	
 	def setClientAddress(self, addr):
@@ -38,11 +45,18 @@ class Server:
 		print(f"Message from {self.getClientAddress()} have been received!:\n{messageRecv.decode('utf-8')} \n")
 		return messageRecv.decode("utf-8")
 
+	def sendDns(self):
+		self.dnsAddress = input("Type the DNS IP adress: ")
+		msg = "REG " + socket.gethostbyname(socket.gethostname())
+		print(msg)
+		self.dnsSock.sendto(bytes(msg, encoding='utf8'), (socket.gethostname(),self.serverPort))
+
 
 serverSocket = Server()
+serverSocket.sendDns()
 while True:
     msg = serverSocket.recvMsg()
     msgtoSend = handleMsg.checkMsg(msg)
     print(msgtoSend)
     for it in msgtoSend:
-    	serverSocket.sendMsg(it)
+    	serverSocket.sendMsg(it)   
