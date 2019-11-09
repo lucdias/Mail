@@ -21,8 +21,12 @@ def checkMsg(msg):
 			return handleGet(user)
 
 def handleSend(userTo, userFrom, msg):
-	os.system(f"bash users.sh {userTo}")
-	fMsg = open(f"SRmail/{userTo}/{userFrom}.txt", "w")
+	if constant.system == 'Linux':
+		os.system(f"bash users.sh {userTo}")
+		fMsg = open(f"SRmail/{userTo}/{userFrom}.txt", "w")
+	elif constant.system == 'Windows':
+		os.system(f"users.bat {userTo}")
+		fMsg = open(f"SRmail/{userTo}/{userFrom}.txt", "w")
 	fMsg.write(f"{userFrom}\n" + f"{msg}")
 	fMsg.close()
 
