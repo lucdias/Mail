@@ -6,10 +6,7 @@ import handleMsg
 # para receber vai ser GET FROM "nome"
 #
 #
-if constant.system == 'Linux':
-	os.system("bash folders.sh server")
-elif constant.system == 'Windows':
-	os.system("folders.bat server")
+os.system(constant.folders + " server")
 
 class Server:
 	serverPort = 7777

@@ -14,25 +14,18 @@ def checkMsg(msg):
 		try:
 			return handleGet(user)
 		except FileNotFoundError:
-			if constant.system == 'Windows':
-				os.system(f"mkdir SRmail\\{command[1]}")
-			elif constant.system == 'Linux':
-				os.system(f"mkdir SRmail/{command[1]}")
+			os.system("mkdir SRmail" + constant.bars + command[1])
 			return handleGet(user)
 
 def handleSend(userTo, userFrom, msg):
-	if constant.system == 'Linux':
-		os.system(f"bash users.sh {userTo}")
-		fMsg = open(f"SRmail/{userTo}/{userFrom}.txt", "w")
-	elif constant.system == 'Windows':
-		os.system(f"users.bat {userTo}")
-		fMsg = open(f"SRmail/{userTo}/{userFrom}.txt", "w")
+	os.system(constant.users + " " + userTo)
+	fMsg = open(f"SRmail/{userTo}/{userFrom}.txt", "w")
 	fMsg.write(f"{userFrom}\n" + f"{msg}")
 	fMsg.close()
 
 
 def handleGet(user):
-	path = f"SRmail/{user}/"
+	path = f"SRmail" + constant.bars + user + constant.bars
 	if(handleFolder.countFiles(path) <= 0):
 		return [constant.noMail]
 	else:

@@ -2,11 +2,7 @@ import client
 import mail
 import os
 import constant
-
-if constant.system == 'Linux':
-	os.system("bash folders.sh client")
-elif constant.system == 'Windows':
-	os.system("folders.bat client")
+os.system(constant.folders + " client")
 
 def intro(socket, email):
 	print("Welcome to the Mail\nWho are you?")
