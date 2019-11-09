@@ -6,6 +6,7 @@ import handleMsg
 # para receber vai ser GET FROM "nome"
 #
 #
+
 os.system(constant.folders + " server")
 
 class Server:

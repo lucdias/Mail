@@ -20,9 +20,11 @@ def menu(client, email):
 	if command == '1':
 		mail.Mail.readMailBox()
 	elif command == '2':
-		print("Put the destination and then the message")
-		client.sendMessage(f"SEND {email.getUser()} " + input())
-
+		print("Put the destination")
+        destination = input()
+        print("Put the message")
+        msg = input()
+        client.sendMessage(f"SEND {email.getUser()} " + f"{destination:<{constant.HEADERSIZE-len(email.getUser())-len(destination)}} " + msg)
 
 email = mail.Mail()
 clientSocket = client.Client()
