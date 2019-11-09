@@ -1,13 +1,8 @@
 import client
 import mail
-import platform
 import os
 import constant
-
-if platform.system() == 'Linux':
-	os.system("bash folders.sh client")
-elif platform.system() == 'Windows':
-	os.system("folders.bat client")
+os.system(constant.folders + " client")
 
 def intro(socket, email):
 	print("Welcome to the Mail\nWho are you?")
@@ -30,7 +25,6 @@ def menu(client, email):
 		print("Put the message")
 		msg = input()
 		client.sendMessage(f"SEND {email.getUser()} " + f"{destination:<{constant.HEADERSIZE-len(email.getUser())-len(destination)}} " + msg)
-
 
 email = mail.Mail()
 clientSocket = client.Client()
