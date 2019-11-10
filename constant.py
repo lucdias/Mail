@@ -15,3 +15,4 @@ elif platform.system() == 'Windows':
 path = "Rmail/CaixaPostal"
 noMail = "zero emails"
 endMails = "END"
+connectMsg = "IHB"

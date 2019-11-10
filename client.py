@@ -1,9 +1,12 @@
-import os
 import socket
 
 class Client:
-	serverName = socket.gethostname()
+	serverName = None
 	serverPort = 7777
+	dnsPort = 12000
+	dnsIP = socket.gethostname()
+	serverAddress = None
+	dnsAddress = (dnsIP, dnsPort)
 	def __init__(self, sock = None):
 	    if sock is None:
 	        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -13,16 +16,33 @@ class Client:
 	
 	
 	def setServerAddress(self):
-		self.serverAddress = (self.serverName, self.serverPort)
+		self.serverAddress = (self.getServerIP(), self.getServerPort())
 
 	
 	def getServerAddress(self):
 		return self.serverAddress
 
 
-	def connectClient(self, host, port):
-		raise NotImplementedError
-
+	def connectClient(self, serverName):
+		if self.serverName == None:
+			self.setServerIP(self.getIpServer(serverName))
+			self.setServerAddress()
+		sendMessage(constant.connectMsg)
+		serverMsg = self.socket.recvMsg()
+		if serverMsg == "BSY":
+			return "Error to connect"
+		else:
+			return "Connected"
+	
+	
+	def disconnectClient(self):
+		self.sendMessage("IOB")
+		serverMsg = self.socket.recvMsg()
+		if serverMsg == "OK":
+			return "User disconnected"
+		else:
+			self.disconnectClient()
+	
 	
 	def createPackets(self, msg):
 		if len(msg) > 2048:
@@ -40,5 +60,26 @@ class Client:
 	def recvMsg(self):
 		(msg, addr) = self.sock.recvfrom(2048)
 		return msg.decode("utf-8")
+
+	
+	def getIpServer(self, serverName):
+		sendMsg = "WHO " + serverName
+		self.sock.sendto(bytes(sendMsg, encoding='utf8'), self.dnsAddress)
+		IP = self.recvMsg()
+		return IP
+		
+	
+	def timer(self):
+		raise NotImplementedError
+	
+	
+	def setServerIP(self, IP):
+		self.serverName = IP
+	
+	
+	def getServerIP(self):
+		return self.serverName
 		
 		
+	def getServerPort(self):
+		return self.serverPort

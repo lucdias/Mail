@@ -4,8 +4,9 @@ import os
 import constant
 os.system(constant.folders + " client")
 
+
 def intro(socket, email):
-	print("Welcome to the Mail\nWho are you?")
+	print("Welcome to the Mail\n\nWho are you?")
 	email.setUser(input())
 	socket.sendMessage(f"GET {email.getUser()}")
 	msg = socket.recvMsg()
@@ -22,6 +23,8 @@ def menu(client, email):
 	elif command == '2':
 		print("Put the destination")
 		destination = input()
+		print("Put the subject")
+		subject = input()
 		print("Put the message")
 		msg = input()
 		client.sendMessage(f"SEND {email.getUser()} " + f"{destination:<{constant.HEADERSIZE-len(email.getUser())-len(destination)}} " + msg)

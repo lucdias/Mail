@@ -1,8 +1,11 @@
 import constant
 import os
+import client
+
 class Mail:
 
 	user = None
+	socket = client.Client()
 	
 	@staticmethod
 	def putIntoMailBox(msg):	
@@ -39,3 +42,49 @@ class Mail:
 					print("\n")
 					fMsg.close()
 
+
+	def connect(self):
+		statusConnection = self.socket.connectClient("RMail")
+		if statusConnection == "Connected":
+			statusConnection = sendLogin()
+			if statusConnection != "User connected":
+				return "Error"
+			else:
+				return "Success"
+		else:
+			return "Server unavailable"
+	
+	
+	def getQuantMails(self):
+		quantMails = self.socket.recvMsg()
+		if quantMails > -1:
+			return quantMails
+		else:
+			return "Error"	
+	
+			
+	def sendLogin(self):
+		self.socket.sendMessage(user)
+		serverMsg = self.socket.recvMsg()
+		if serverMsg == "OK":
+			return "User connected"
+		elif serverMsg == "BSY":
+			return "Server unavailable"
+		else:
+			return self.sendLogin()
+		
+		
+	def sendMail(self, destination, subject, body):
+		self.socket.sendMessage(f"SEND {user}" + f" {destination}" + f" {subject}" + " {body}")
+			
+			
+	def disconnect(self):
+		self.socket.disconnectClient()
+	
+	
+	def eraseMail(self):
+		raise NotImplementedError
+
+
+mail = Mail()
+mail.connect()
