@@ -1,7 +1,8 @@
 import socket
+import time
 
 class Client:
-	serverName = None
+	serverName = socket.gethostname()
 	serverPort = 7777
 	dnsPort = 12000
 	dnsIP = socket.gethostname()
@@ -27,8 +28,8 @@ class Client:
 		if self.serverName == None:
 			self.setServerIP(self.getIpServer(serverName))
 			self.setServerAddress()
-		sendMessage(constant.connectMsg)
-		serverMsg = self.socket.recvMsg()
+		self.sendMessage("IHB")
+		serverMsg = self.recvMsg()
 		if serverMsg == "BSY":
 			return "Error to connect"
 		else:
@@ -37,12 +38,12 @@ class Client:
 	
 	def disconnectClient(self):
 		self.sendMessage("IOB")
-		serverMsg = self.socket.recvMsg()
+		'''serverMsg = self.socket.recvMsg()
 		if serverMsg == "OK":
 			return "User disconnected"
 		else:
 			self.disconnectClient()
-	
+		'''
 	
 	def createPackets(self, msg):
 		if len(msg) > 2048:

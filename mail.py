@@ -1,12 +1,14 @@
 import constant
 import os
 import client
+import time
 
 class Mail:
 
 	user = None
 	socket = client.Client()
-	
+	qntMails = None
+
 	@staticmethod
 	def putIntoMailBox(msg):	
 		if msg != constant.noMail:
@@ -42,11 +44,15 @@ class Mail:
 					print("\n")
 					fMsg.close()
 
-
+	#modularizar melhor essa parte
 	def connect(self):
 		statusConnection = self.socket.connectClient("RMail")
+		print(statusConnection)
+		time.sleep(1)
 		if statusConnection == "Connected":
-			statusConnection = sendLogin()
+			statusConnection = self.sendLogin()
+			print(statusConnection)
+			self.socket.sendMessage("Ok Num")
 			if statusConnection != "User connected":
 				return "Error"
 			else:
@@ -64,14 +70,13 @@ class Mail:
 	
 			
 	def sendLogin(self):
-		self.socket.sendMessage(user)
+		self.socket.sendMessage(self.getUser())
 		serverMsg = self.socket.recvMsg()
-		if serverMsg == "OK":
-			return "User connected"
-		elif serverMsg == "BSY":
+		self.setQntMails(serverMsg)
+		if serverMsg == "BSY":
 			return "Server unavailable"
 		else:
-			return self.sendLogin()
+			return "User connected"
 		
 		
 	def sendMail(self, destination, subject, body):
@@ -86,5 +91,11 @@ class Mail:
 		raise NotImplementedError
 
 
+	def setQntMails(self, numMail):
+		self.qntMails = numMail
+
+
 mail = Mail()
-mail.connect()
+mail.setUser("Rafael")
+print(mail.connect())
+mail.disconnect()
