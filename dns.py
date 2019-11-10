@@ -5,11 +5,12 @@ import handleMsg
 
 class dns:
     database = {}
-    dnsServerPort = 7777
+    dnsServerPort = 12000
     destAddress = None
     def __init__(self, sock = None):
         if sock is None:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            self.sock.bind((socket.gethostname(), self.dnsServerPort))
         else:
             self.sock = sock
    
