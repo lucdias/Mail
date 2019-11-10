@@ -57,8 +57,9 @@ while True:
         print("database = ")
         print(dnsServer.database)
     elif getFunction(msg) == "WHO":
+        print(getArgument(msg))
         if getArgument(msg) in dnsServer.database:
-            dnsServer.sendMsg(dnsServer.database[getArgument(msg)])
+            dnsServer.sendMsg(dnsServer.database[getArgument(msg)][0])
         else:
             dnsServer.sendMsg("NOT FOUND")
             dnsServer.setDestAddress(None)
