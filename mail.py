@@ -51,7 +51,6 @@ class Mail:
 		time.sleep(1)
 		if statusConnection == "Connected":
 			statusConnection = self.sendLogin()
-			print(statusConnection)
 			self.socket.sendMessage("Ok Num")
 			if statusConnection != "User connected":
 				return "Error"
@@ -72,10 +71,11 @@ class Mail:
 	def sendLogin(self):
 		self.socket.sendMessage(self.getUser())
 		serverMsg = self.socket.recvMsg()
-		self.setQntMails(serverMsg)
+		self.setQntMails(0)
 		if serverMsg == "BSY":
 			return "Server unavailable"
 		else:
+			self.setQntMails(serverMsg)
 			return "User connected"
 		
 		
@@ -95,7 +95,24 @@ class Mail:
 		self.qntMails = numMail
 
 
+	def getQuantMails(self):
+		return self.qntMails
+
+
+	def attMailBox(self):
+		self.socket.sendMessage(f"GET {self.user}")
+		aux = self.getQuantMails()
+		msg = self.socket.recvMsg()
+		while msg != "END":
+			print(msg)
+			putIntoMailBox(msg)
+			msg = self.socket.recvMsg()
+
+
 mail = Mail()
 mail.setUser("Rafael")
 print(mail.connect())
+time.sleep(1)
+mail.attMailBox()
+time.sleep(1)
 mail.disconnect()
