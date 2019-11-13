@@ -8,14 +8,14 @@ class Mail:
 	user = None
 	socket = client.Client()
 	qntMails = None
-
+	mailsBody = {}
 	@staticmethod
 	def putIntoMailBox(msg):	
 		if msg != constant.noMail:
 			tempMsg = msg.split()
 			fMsg = open(f"{constant.path}/{tempMsg[0]}.txt", "w")
 			fMsg.write(msg)
-
+			fMsg.close()
 
 	def setUser(self, user):
 		self.user = user
@@ -71,11 +71,12 @@ class Mail:
 	def sendLogin(self):
 		self.socket.sendMessage(self.getUser())
 		serverMsg = self.socket.recvMsg()
-		self.setQntMails(0)
+		self.setQntMails("0")
 		if serverMsg == "BSY":
 			return "Server unavailable"
 		else:
-			self.setQntMails(serverMsg)
+			quantMail = serverMsg.split()
+			self.setQntMails(int(quantMail[1]))
 			return "User connected"
 		
 		
@@ -84,6 +85,7 @@ class Mail:
 			
 			
 	def disconnect(self):
+		print("estou desconectarndo")
 		self.socket.disconnectClient()
 	
 	
@@ -103,16 +105,43 @@ class Mail:
 		self.socket.sendMessage(f"GET {self.user}")
 		aux = self.getQuantMails()
 		msg = self.socket.recvMsg()
-		while msg != "END":
-			print(msg)
-			putIntoMailBox(msg)
+		while aux > 0:
+			self.putIntoMailBox(msg)
 			msg = self.socket.recvMsg()
+			aux -= 1
 
-
+	
+	def retMailsFromInbox(self):
+		listRet = []
+		Id = 0
+		with os.scandir(constant.path) as it:
+			for entry in it:
+				if entry.is_file():
+					fMsg = open(constant.path + "/" + entry.name, "r")
+					msg = fMsg.read()
+					msg = msg.split(None, 2)
+					auxTuple = (msg[0], msg[1], Id)
+					self.putBodyWithId(Id, msg[2])
+					Id += 1
+					listRet.append(auxTuple)
+					fMsg.close()
+		return listRet
+	
+	
+	def putBodyWithId(self, Id, msg):
+		self.mailsBody[Id] = msg
+	
+	
+	def getBodyFromId(self, Id):
+		return self.mailsBody[Id]
+		
+		
 mail = Mail()
-mail.setUser("Rafael")
+mail.setUser("rafael")
 print(mail.connect())
 time.sleep(1)
 mail.attMailBox()
+mail.retMailsFromInbox()
+print(mail.getBodyFromId(0))
 time.sleep(1)
 mail.disconnect()

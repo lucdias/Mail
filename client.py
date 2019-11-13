@@ -11,6 +11,7 @@ class Client:
 	def __init__(self, sock = None):
 	    if sock is None:
 	        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+	        self.sock.settimeout(1)
 	        self.setServerAddress()
 	    else:
 	    	self.sock = sock
@@ -59,8 +60,12 @@ class Client:
 	
 	
 	def recvMsg(self):
-		(msg, addr) = self.sock.recvfrom(2048)
-		return msg.decode("utf-8")
+		try:
+			(msg, addr) = self.sock.recvfrom(2048)
+		except socket.timeout:
+			return "Deu timeout"
+		else:
+			return msg.decode("utf-8")
 
 	
 	def getIpServer(self, serverName):
