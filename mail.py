@@ -9,6 +9,7 @@ class Mail:
 	socket = client.Client()
 	qntMails = None
 	mailsBody = {}
+	
 	@staticmethod
 	def putIntoMailBox(msg):	
 		if msg != constant.noMail:
