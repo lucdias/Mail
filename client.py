@@ -31,7 +31,8 @@ class Client:
 			self.setServerAddress()
 		self.sendMessage("IHB")
 		serverMsg = self.recvMsg()
-		print(serverMsg)
+		while serverMsg != "IHB":
+			serverMsg = self.recvMsg()
 		if serverMsg == "BSY":
 			return "Error to connect"
 		else:
@@ -67,7 +68,7 @@ class Client:
 		try:
 			(msg, addr) = self.sock.recvfrom(2048)
 		except socket.timeout:
-			print("meme")
+			return "timeout"
 		else:
 			return msg.decode("utf-8")
 

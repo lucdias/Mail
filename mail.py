@@ -62,13 +62,12 @@ class Mail:
 	def sendLogin(self):
 		self.socket.sendMessage(self.getUser())
 		serverMsg = self.socket.recvMsg()
+		while serverMsg != "OK":
+			serverMsg = self.socket.recvMsg()
 		self.setQntMails("0")
 		if serverMsg == "BSY":
 			return "Server unavailable"
 		else:
-			print(serverMsg)
-			quantMail = serverMsg.split()
-			self.setQntMails(int(quantMail[1]))
 			return "User connected"
 		
 		
@@ -131,7 +130,7 @@ class Mail:
 mail = Mail()
 mail.setUser("jose")
 print(mail.connect())
-mail.attMailBox()
-mail.retMailsFromInbox()
-print(mail.getBodyFromId(0))
-mail.disconnect()
+#mail.attMailBox()
+#mail.retMailsFromInbox()
+#print(mail.getBodyFromId(0))
+#mail.disconnect()
