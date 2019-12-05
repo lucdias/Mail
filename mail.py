@@ -47,9 +47,7 @@ class Mail:
 
 	#modularizar melhor essa parte
 	def connect(self):
-		statusConnection = self.socket.connectClient("RMail")
-		print(statusConnection)
-		time.sleep(1)
+		statusConnection = self.socket.connectClient("rafamail.com.br")
 		if statusConnection == "Connected":
 			statusConnection = self.sendLogin()
 			self.socket.sendMessage("Ok Num")
@@ -60,14 +58,6 @@ class Mail:
 		else:
 			return "Server unavailable"
 	
-	
-	def getQuantMails(self):
-		quantMails = self.socket.recvMsg()
-		if quantMails > -1:
-			return quantMails
-		else:
-			return "Error"	
-	
 			
 	def sendLogin(self):
 		self.socket.sendMessage(self.getUser())
@@ -76,6 +66,7 @@ class Mail:
 		if serverMsg == "BSY":
 			return "Server unavailable"
 		else:
+			print(serverMsg)
 			quantMail = serverMsg.split()
 			self.setQntMails(int(quantMail[1]))
 			return "User connected"
@@ -86,7 +77,7 @@ class Mail:
 			
 			
 	def disconnect(self):
-		print("estou desconectarndo")
+		print("estou desconectando")
 		self.socket.disconnectClient()
 	
 	
@@ -140,9 +131,7 @@ class Mail:
 mail = Mail()
 mail.setUser("rafael")
 print(mail.connect())
-time.sleep(1)
 mail.attMailBox()
 mail.retMailsFromInbox()
 print(mail.getBodyFromId(0))
-time.sleep(1)
 mail.disconnect()

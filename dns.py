@@ -4,7 +4,7 @@ import constant
 import handleMsg
 
 class dns:
-    database = {"RMail" : "127.0.0.1"}
+    database = {}
     dnsServerPort = 12000
     destAddress = None
     def __init__(self, sock = None):
