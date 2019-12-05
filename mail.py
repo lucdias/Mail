@@ -129,7 +129,7 @@ class Mail:
 		
 		
 mail = Mail()
-mail.setUser("rafael")
+mail.setUser("jose")
 print(mail.connect())
 mail.attMailBox()
 mail.retMailsFromInbox()

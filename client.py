@@ -30,8 +30,8 @@ class Client:
 			self.setServerIP(self.getFromDns(serverName))
 			self.setServerAddress()
 		self.sendMessage("IHB")
-		print("Oi")
 		serverMsg = self.recvMsg()
+		print(serverMsg)
 		if serverMsg == "BSY":
 			return "Error to connect"
 		else:
