@@ -4,7 +4,7 @@ import constant
 import handleMsg
 
 class dns:
-    database = {"RMail" : "127.0.0.1"}
+    database = {}
     dnsServerPort = 12000
     destAddress = None
     def __init__(self, sock = None):
@@ -15,7 +15,7 @@ class dns:
             self.sock = sock
    
     def sendMsg(self, msg):
-        self.sock.sendto(bytes(msg, encoding='utf8'), self.getDestAddress())
+        self.sock.sendto(bytes(str(msg), encoding='utf8'), self.getDestAddress())
      
     
     def setDestAddress(self, addr):
@@ -59,9 +59,8 @@ while True:
     elif getFunction(msg) == "WHO":
         print(getArgument(msg))
         if getArgument(msg) in dnsServer.database:
-            dnsServer.sendMsg(dnsServer.database[getArgument(msg)])
-            print(dnsServer.database[getArgument(msg)])
+            dnsServer.sendMsg(dnsServer.database[getArgument(msg)][0])
+            print(dnsServer.database[getArgument(msg)][0])
         else:
             dnsServer.sendMsg("NOT FOUND")
             dnsServer.setDestAddress(None)
-    
