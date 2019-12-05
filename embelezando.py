@@ -56,7 +56,7 @@ class Server:
 			print(messageRecv.decode())
 		except socket.timeout:
 			print('Server Timeout - line 52')
-			return ("Error", "0.0.0.0")
+			return ("timeout", "0.0.0.0")
 		else:
 			return (messageRecv.decode(), clientAddress)
 		
@@ -88,23 +88,36 @@ class Server:
 	def sendDns(self):
 		self.dnsAddress = "172.22.39.144"
 		msg = "REG " + "rafamail.com.br"
-		print(msg)
+		print(self.dnsAddress)
 		self.sock.sendto(bytes(msg, encoding='utf8'), (self.dnsAddress,self.dnsPort))
-		rmsg = self.recvMsg()
-		cmd = rmsg[0].split()
-		while cmd[0] != "OK":
-			self.sock.sendto(bytes(msg, encoding='utf8'), (self.dnsAddress,self.dnsPort))
-			rmsg = self.recvMsg()
-			cmd = rmsg.split()
 		return 1
 
-
+	
+	def waitMsgs(self):
+		(msg, addr) = self.recvMsg()
+		if msg == "timeout" or addr != self.getClientAddress():
+			return 4
+		elif msg == "IOB":
+			return 5
+		elif msg == "box" or msg == "trash":
+			return 1
+			
+			
+	def reset(self):
+		self.setClientAddress()
+		self.setLogin()
+		self.sendMsg("IOB")
+		return 1
+		
+		
 server = Server()
 
 msf = {
 	0 : server.sendDns,
 	1 : server.waitIHB,
-	2 : server.waitLogin
+	2 : server.waitLogin,
+	4 : server.waitMsgs,
+	5 : server.reset
 }	
 
 state = 0	

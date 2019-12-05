@@ -33,7 +33,6 @@ class dns:
 
     def register(self, name):
         self.database[name] = self.getDestAddress()
-        self.sendMsg("OK")
     
 
 

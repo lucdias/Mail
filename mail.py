@@ -50,7 +50,6 @@ class Mail:
 		statusConnection = self.socket.connectClient("rafamail.com.br")
 		if statusConnection == "Connected":
 			statusConnection = self.sendLogin()
-			self.socket.sendMessage("Ok Num")
 			if statusConnection != "User connected":
 				return "Error"
 			else:
