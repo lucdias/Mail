@@ -31,22 +31,19 @@ class Client:
 			self.setServerAddress()
 		self.sendMessage("IHB")
 		serverMsg = self.recvMsg()
-		while serverMsg != "IHB":
-			serverMsg = self.recvMsg()
-		if serverMsg == "BSY":
-			return "Error to connect"
-		else:
-			return "Connected"
+		return serverMsg	
 	
 	
 	def disconnectClient(self):
 		self.sendMessage("IOB")
-		'''serverMsg = self.socket.recvMsg()
-		if serverMsg == "OK":
-			return "User disconnected"
-		else:
-			self.disconnectClient()
-		'''
+		serverMsg = self.socket.recvMsg()
+		count = 0
+		while serverMsg == "IOB" and count < 3:
+			self.sendMessage("IOB")
+			serverMsg = self.socket.recvMsg()
+			count += 1
+		return "User desconnected"
+		
 	
 	def createPackets(self, msg):
 		if len(msg) > 2048:
@@ -57,8 +54,9 @@ class Client:
 
 	def sendMessage(self, msg):
 		message = self.createPackets(msg)
+		print(self.serverAddress)
 		for sendMsg in message:
-			self.sock.sendto(bytes(sendMsg, encoding='utf8'), self.serverAddress)
+			self.sock.sendto(bytes(sendMsg, encoding='utf8'), ('192.168.0.13', 7777))
 	
 	
 	def recvMsg(self):

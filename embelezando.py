@@ -80,9 +80,13 @@ class Server:
 	def waitLogin(self):
 		(msg, addr) = self.recvMsg()
 		if addr == self.clientAddress:
-			self.setLogin(msg)
-			self.setLoginFolder()
-			self.sendMsg("OK")
+			if msg == "IHB":
+				self.sendMsg("IHB")
+				return 2
+			else:
+				self.setLogin(msg)
+				self.setLoginFolder()
+				self.sendMsg("ACK")
 			return 4
 		else:
 			return 2
@@ -102,8 +106,10 @@ class Server:
 	
 	def waitMsgs(self):
 		(msg, addr) = self.recvMsg()
+		if msg == "timeout":
+			return msg
 		msg = msg.split("///", 4)
-		if msg[0] == "timeout" or addr != self.getClientAddress():
+		if addr != self.getClientAddress():
 			return 4
 		elif msg[0] == "IOB":
 			return 5
@@ -114,10 +120,17 @@ class Server:
 			return 4
 		elif msg[0] == "SEND":
 			self.msgIsSend(msg[1:])
+			self.sendMsg("ACK")
 			return 4
 		elif msg[0] == "GET":
 			self.msgIsGet(msg[1])
 			return 4
+		elif msg[0] == self.getLogin():
+			self.sendMsg("ACK")
+			return 4
+		elif msg[0] == "IHB":
+			self.sendMsg("ACK")
+			return 2
 			
 	def msgIsSend(self, msg):
 		handleMsg.handleSend(msg[0], msg[1], msg[2], msg[3])
@@ -135,6 +148,13 @@ class Server:
 			
 	def reset(self):
 		self.sendMsg("IOB")
+		(msg, addr) = self.recvMsg()
+		count = 0
+		while msg == "timeout" and count < 6:
+			(msg, addr) = self.recvMsg()
+			count += 1
+		if msg == "IOB":
+			return 5
 		self.setClientAddress()
 		self.setLogin()
 		return 1
@@ -161,9 +181,10 @@ msf = {
 	5 : server.reset
 }	
 
-state = 0	
+state = 0
+count = 0
 while True:
 	state = msf[state]()
-	if state == 3:
-		exit()
-	
+	if state == "timeout":
+		count += 1
+		
