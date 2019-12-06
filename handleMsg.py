@@ -2,6 +2,7 @@ import os
 import platform
 import constant
 import handleFolder
+import random
 
 def checkMsg(msg):
 	tempMsg = msg[0:constant.HEADERSIZE]
@@ -18,10 +19,10 @@ def checkMsg(msg):
 			os.system("mkdir SRmail" + constant.bars + command[1])
 			return handleGet(user)
 
-def handleSend(userTo, userFrom, msg):
+def handleSend(userTo, userFrom, subject, msg):
 	os.system(constant.users + " " + userTo)
-	fMsg = open(f"SRmail/{userTo}/{userFrom}.txt", "w")
-	fMsg.write(f"{userFrom}\n" + f"{msg}")
+	fMsg = open(f"SRmail/{userTo}/CE/{int(random.random()*10000)}.txt", "w")
+	fMsg.write(f"{userFrom}\n" + f"{subject}\n" + f"{msg}")
 	fMsg.close()
 
 
@@ -31,3 +32,18 @@ def handleGet(user):
 		return [constant.noMail]
 	else:
 		return handleFolder.readAllFiles(path)
+		
+
+def handleBox(user):
+	msg = handleFolder.readAllFiles(f"SRmail/{user}/CE/")
+	bodys = {}
+	subjects = []
+	index = 0
+	for tempMsg in msg:
+		otherMsg = tempMsg.split("\n", 3)
+		subjects.append((otherMsg[0], otherMsg[1]))
+		bodys[index] = otherMsg[2]
+		index = index + 1
+	return (subjects, bodys)
+	
+	

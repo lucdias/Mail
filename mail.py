@@ -2,6 +2,7 @@ import constant
 import os
 import client
 import time
+import pickle
 
 class Mail:
 
@@ -9,7 +10,7 @@ class Mail:
 	socket = client.Client()
 	qntMails = None
 	mailsBody = {}
-	
+	subjects = []
 	@staticmethod
 	def putIntoMailBox(msg):	
 		if msg != constant.noMail:
@@ -71,7 +72,7 @@ class Mail:
 		
 		
 	def sendMail(self, destination, subject, body):
-		self.socket.sendMessage(f"SEND {user}" + f" {destination}" + f" {subject}" + " {body}")
+		self.socket.sendMessage(f"SEND {destination}" + f" {self.user}" + f" {subject}" + f" {body}")
 			
 			
 	def disconnect(self):
@@ -92,14 +93,10 @@ class Mail:
 
 
 	def attMailBox(self):
-		self.socket.sendMessage(f"GET {self.user}")
-		aux = self.getQuantMails()
-		msg = self.socket.recvMsg()
-		while aux > 0:
-			self.putIntoMailBox(msg)
-			msg = self.socket.recvMsg()
-			aux -= 1
-
+		self.socket.sendMessage("box")
+		msg = self.socket.recvSub()
+		self.subjects = pickle.loads(msg)
+		
 	
 	def retMailsFromInbox(self):
 		listRet = []
@@ -118,17 +115,28 @@ class Mail:
 		return listRet
 	
 	
-	def putBodyWithId(self, Id, msg):
-		self.mailsBody[Id] = msg
+	def displaySubs(self):
+		index = 0
+		for msg in self.subjects:
+			print(f"{index}: {msg[0]} {msg[1]}")	
+			index += 1	
 	
 	
-	def getBodyFromId(self, Id):
-		return self.mailsBody[Id]
-		
+	def getBody(self, index):
+		self.socket.sendMessage(f"GET {index}")
+		msg = self.socket.recvMsg()
+		return msg
 		
 mail = Mail()
-mail.setUser("jose")
-print(mail.connect())
+mail.setUser("valdecira")
+mail.connect()
+mail.attMailBox()
+mail.displaySubs()
+index = input("qual email deseja utilizar?")
+os.system("clear")
+print(mail.getBody(index))
+mail.sendMail(input("Insira o destino: "), input("Insira o assunto: "), input("Insira a mensagem: "))
+mail.disconnect()
 #mail.attMailBox()
 #mail.retMailsFromInbox()
 #print(mail.getBodyFromId(0))

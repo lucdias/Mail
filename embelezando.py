@@ -3,6 +3,7 @@ import os
 import constant
 import handleMsg
 import handleFolder
+import pickle
 # protocolo de comunicação vai começar com SEND TO "nome" "msg"
 # para receber vai ser GET FROM "nome"
 #
@@ -15,7 +16,8 @@ class Server:
 	clientAddress = None
 	dnsAddress = None
 	login = None
-
+	bodys = {}
+	
 	def __init__(self, sock = None):
 		if sock is None:
 			self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -49,7 +51,11 @@ class Server:
 	def sendMsg(self, msg):
 		self.sock.sendto(bytes(msg, encoding='utf8'), self.getClientAddress())
 	
-		
+	
+	def sendSubjects(self, subjects):
+		self.sock.sendto(pickle.dumps(subjects), self.getClientAddress())
+	
+	
 	def recvMsg(self):
 		try:
 			(messageRecv, clientAddress) = self.sock.recvfrom(2048)
@@ -75,8 +81,9 @@ class Server:
 		(msg, addr) = self.recvMsg()
 		if addr == self.clientAddress:
 			self.setLogin(msg)
+			self.setLoginFolder()
 			self.sendMsg("OK")
-			return 3
+			return 4
 		else:
 			return 2
 		
@@ -86,7 +93,7 @@ class Server:
 	
 	
 	def sendDns(self):
-		self.dnsAddress = "172.22.39.144"
+		self.dnsAddress = "192.168.0.13"
 		msg = "REG " + "rafamail.com.br"
 		print(self.dnsAddress)
 		self.sock.sendto(bytes(msg, encoding='utf8'), (self.dnsAddress,self.dnsPort))
@@ -95,20 +102,54 @@ class Server:
 	
 	def waitMsgs(self):
 		(msg, addr) = self.recvMsg()
-		if msg == "timeout" or addr != self.getClientAddress():
+		msg = msg.split(" ", 4)
+		if msg[0] == "timeout" or addr != self.getClientAddress():
 			return 4
-		elif msg == "IOB":
+		elif msg[0] == "IOB":
 			return 5
-		elif msg == "box" or msg == "trash":
-			return 1
+		elif msg[0] == "box":
+			self.msgIsBox()
+			return 4
+		elif msg[0] == "trash":
+			return 4
+		elif msg[0] == "SEND":
+			self.msgIsSend(msg[1:])
+			return 4
+		elif msg[0] == "GET":
+			self.msgIsGet(msg[1])
+			return 4
+			
+	def msgIsSend(self, msg):
+		handleMsg.handleSend(msg[0], msg[1], msg[2], msg[3])
+			
+	
+	def msgIsGet(self, index):
+		self.sendMsg(self.getBodyById(index))
+	
+	
+	def msgIsBox(self):
+		(subjects, bodys) = handleMsg.handleBox(self.getLogin())
+		self.setBody(bodys)
+		self.sendSubjects(subjects)
 			
 			
 	def reset(self):
+		self.sendMsg("IOB")
 		self.setClientAddress()
 		self.setLogin()
-		self.sendMsg("IOB")
 		return 1
 		
+	
+	def setBody(self, msg = {}):
+		self.bodys = msg
+	
+	
+	def getBody(self):
+		return self.bodys
+	
+	
+	def getBodyById(self, index):
+		return self.bodys[int(index)]
 		
 server = Server()
 

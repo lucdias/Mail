@@ -17,5 +17,4 @@ def readAllFiles(path):
 				fMsg = open(path + entry.name, "r")
 				msg.append(fMsg.read())
 				fMsg.close()
-		msg.append(constant.endMails)
 		return msg
