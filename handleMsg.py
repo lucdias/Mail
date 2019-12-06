@@ -45,5 +45,18 @@ def handleBox(user):
 		bodys[index] = otherMsg[2]
 		index = index + 1
 	return (subjects, bodys)
+
+
+def handleTrash(user):
+	msg = handleFolder.readAllFiles(f"SRmail/{user}/LE/")
+	bodys = {}
+	subjects = []
+	index = 0
+	for tempMsg in msg:
+		otherMsg = tempMsg.split("\n", 3)
+		subjects.append((otherMsg[0], otherMsg[1]))
+		bodys[index] = otherMsg[2]
+		index = index + 1
+	return (subjects, bodys)
 	
 	
