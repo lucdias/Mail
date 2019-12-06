@@ -102,7 +102,7 @@ class Server:
 	
 	def waitMsgs(self):
 		(msg, addr) = self.recvMsg()
-		msg = msg.split(" ", 4)
+		msg = msg.split("///", 4)
 		if msg[0] == "timeout" or addr != self.getClientAddress():
 			return 4
 		elif msg[0] == "IOB":

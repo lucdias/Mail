@@ -72,7 +72,7 @@ class Mail:
 		
 		
 	def sendMail(self, destination, subject, body):
-		self.socket.sendMessage(f"SEND {destination}" + f" {self.user}" + f" {subject}" + f" {body}")
+		self.socket.sendMessage(f"SEND///{destination}///" + f"{self.user}///" + f"{subject}///" + f"{body}")
 			
 			
 	def disconnect(self):
@@ -123,20 +123,27 @@ class Mail:
 	
 	
 	def getBody(self, index):
-		self.socket.sendMessage(f"GET {index}")
+		self.socket.sendMessage(f"GET///{index}")
 		msg = self.socket.recvMsg()
 		return msg
 		
+		
 mail = Mail()
-mail.setUser("valdecira")
+mail.setUser(input("Please put your user:\n"))
 mail.connect()
-mail.attMailBox()
-mail.displaySubs()
-index = input("qual email deseja utilizar?")
-os.system("clear")
-print(mail.getBody(index))
-mail.sendMail(input("Insira o destino: "), input("Insira o assunto: "), input("Insira a mensagem: "))
-mail.disconnect()
+while True:
+	esc = input("1. send mail\n2. read box\n3. exit\n")
+	if esc == '1':
+		mail.sendMail(input("Insira o destino: "), input("Insira o assunto: "), input("Insira a mensagem: "))
+	elif esc == '2':
+		mail.attMailBox()
+		mail.displaySubs()
+		index = input("qual email deseja utilizar?")
+		os.system("clear")
+		print(mail.getBody(index))
+	elif esc == '3':
+		mail.disconnect()
+		exit()
 #mail.attMailBox()
 #mail.retMailsFromInbox()
 #print(mail.getBodyFromId(0))
