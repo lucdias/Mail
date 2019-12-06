@@ -17,6 +17,7 @@ class Server:
 	dnsAddress = None
 	login = None
 	bodys = {}
+	trashBodys = {}
 	
 	def __init__(self, sock = None):
 		if sock is None:
@@ -93,7 +94,7 @@ class Server:
 	
 	
 	def sendDns(self):
-		self.dnsAddress = "192.168.0.13"
+		self.dnsAddress = "172.22.45.155"
 		msg = "REG " + "rafamail.com.br"
 		print(self.dnsAddress)
 		self.sock.sendto(bytes(msg, encoding='utf8'), (self.dnsAddress,self.dnsPort))
@@ -111,6 +112,7 @@ class Server:
 			self.msgIsBox()
 			return 4
 		elif msg[0] == "trash":
+			self.msgIsTrash()
 			return 4
 		elif msg[0] == "SEND":
 			self.msgIsSend(msg[1:])
@@ -118,6 +120,23 @@ class Server:
 		elif msg[0] == "GET":
 			self.msgIsGet(msg[1])
 			return 4
+		elif msg[0] == "DEL":
+			delId = msg[1]
+
+			#chamar função que move uma mensagem da caixa de entrada para a lixeira
+			return 4
+
+	def delMsg(self, delId):
+		(subjects, bodys) = handleMsg.handleBox(self.getLogin())
+		(trashSubjects, trashBodys) = handleMsg.handleTrash(self.getLogin())
+		#excluir o email da pasta 
+
+
+	def msgIsTrash(self):
+		(trashSubjects, trashBodys) = handleMsg.handleTrash(self.getLogin())
+		self.setBody(trashBodys)
+		self.sendSubjects(trashSubjects)
+
 			
 	def msgIsSend(self, msg):
 		handleMsg.handleSend(msg[0], msg[1], msg[2], msg[3])
