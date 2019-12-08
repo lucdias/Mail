@@ -36,11 +36,11 @@ class Client:
 	
 	def disconnectClient(self):
 		self.sendMessage("IOB")
-		serverMsg = self.socket.recvMsg()
+		serverMsg = self.recvMsg()
 		count = 0
-		while serverMsg == "IOB" and count < 3:
+		while serverMsg != "IOB" and count < 3:
 			self.sendMessage("IOB")
-			serverMsg = self.socket.recvMsg()
+			serverMsg = self.recvMsg()
 			count += 1
 		return "User desconnected"
 		
@@ -87,10 +87,6 @@ class Client:
 		print(IP)
 		return IP
 		
-	
-	def timer(self):
-		raise NotImplementedError
-	
 	
 	def setServerIP(self, IP):
 		self.serverName = IP

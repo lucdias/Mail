@@ -11,10 +11,12 @@ def countFiles(path):
 
 def readAllFiles(path):
 	msg = []
+	names = []
 	with os.scandir(path) as it:
 		for entry in it:
 			if entry.is_file():
 				fMsg = open(path + entry.name, "r")
 				msg.append(fMsg.read())
+				names.append(entry.name)
 				fMsg.close()
-		return msg
+		return (msg, names)

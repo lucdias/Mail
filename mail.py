@@ -11,6 +11,7 @@ class Mail:
 	qntMails = None
 	mailsBody = {}
 	subjects = []
+	
 	@staticmethod
 	def putIntoMailBox(msg):	
 		if msg != constant.noMail:
@@ -115,7 +116,21 @@ class Mail:
 			return "Server unavailable"
 		self.subjects = pickle.loads(msg)
 		return "Sucess"
-		
+	
+	
+	def attMailTrash(self):
+		self.socket.sendMessage("trash")
+		msg = self.socket.recvSub()
+		count = 0
+		while msg == "timeout" and count < 3:
+			self.socket.sendMessage("trash")
+			msg = self.socket.recvSub()
+			count += 1
+		if msg == "timeout":
+			return "Server unavailable"
+		self.subjects = pickle.loads(msg)
+		return "Sucess"
+	
 	
 	def retMailsFromInbox(self):
 		listRet = []
@@ -153,11 +168,41 @@ class Mail:
 			return "Server unavailable"
 		return msg
 		
+	
+	def delFromId(self, index):
+		self.socket.sendMessage(f"DEL///{index}")
+		msg = self.socket.recvMsg()
+		count = 0
+		while msg == "timeout" and count < 3:
+			self.socket.sendMessage(f"DEL///{index}")
+			msg = self.socket.recvMsg()
+			count += 1
+		if msg == "timeout":
+			return "Server unavailable"
+		return msg
+		
 		
 mail = Mail()
 mail.setUser(input("Please put your user:\n"))
 print(mail.connect())
-print(mail.attMailBox())
-#mail.retMailsFromInbox()
-#print(mail.getBodyFromId(0))
-#mail.disconnect()
+while True:
+	print("What do you want to do?\n1. Send Mail\n2. See Box\n3. See trash\n4. Exit\n")
+	cmd = input()
+	if cmd == '1':
+		mail.sendMail(input("Please put your destination:\n"), input("Please put the subject:\n"), input("Please put the message:\n"))
+	elif cmd == '2':
+		mail.attMailBox()
+		mail.displaySubs()
+		index = input("What mail do you want to read?\n")
+		print(mail.getBody(index))
+		cmd = input("Do you want to delete the mail?\nY or N\n")
+		if cmd == "Y":
+			mail.delFromId(index)
+	elif cmd == '3':
+		mail.attMailTrash()
+		mail.displaySubs()
+		index = input("What mail do you want to read?\n")
+		print(mail.getBody(index))
+	elif cmd == '4':
+		mail.disconnect()
+		exit()

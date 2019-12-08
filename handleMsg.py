@@ -35,20 +35,22 @@ def handleGet(user):
 		
 
 def handleBox(user):
-	msg = handleFolder.readAllFiles(f"SRmail/{user}/CE/")
+	(msg, names) = handleFolder.readAllFiles(f"SRmail/{user}/CE/")
 	bodys = {}
+	delBodys = {}
 	subjects = []
 	index = 0
 	for tempMsg in msg:
 		otherMsg = tempMsg.split("\n", 3)
 		subjects.append((otherMsg[0], otherMsg[1]))
 		bodys[index] = otherMsg[2]
+		delBodys[index] = names[index]
 		index = index + 1
-	return (subjects, bodys)
-
-
+	return (subjects, bodys, delBodys)
+	
+	
 def handleTrash(user):
-	msg = handleFolder.readAllFiles(f"SRmail/{user}/LE/")
+	(msg, names) = handleFolder.readAllFiles(f"SRmail/{user}/LE/")
 	bodys = {}
 	subjects = []
 	index = 0
@@ -59,4 +61,6 @@ def handleTrash(user):
 		index = index + 1
 	return (subjects, bodys)
 	
-	
+
+def handleDel(name, user):
+	os.system(f"mv SRmail/{user}/CE/{name} SRmail/{user}/LE/")

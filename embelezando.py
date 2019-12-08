@@ -18,6 +18,7 @@ class Server:
 	login = None
 	bodys = {}
 	trashBodys = {}
+	delMails = {}
 	
 	def __init__(self, sock = None):
 		if sock is None:
@@ -98,7 +99,7 @@ class Server:
 	
 	
 	def sendDns(self):
-		self.dnsAddress = "172.22.45.155"
+		self.dnsAddress = "192.168.0.13"
 		msg = "REG " + "rafamail.com.br"
 		print(self.dnsAddress)
 		self.sock.sendto(bytes(msg, encoding='utf8'), (self.dnsAddress,self.dnsPort))
@@ -107,8 +108,6 @@ class Server:
 	
 	def waitMsgs(self):
 		(msg, addr) = self.recvMsg()
-		if msg == "timeout":
-			return msg
 		msg = msg.split("///", 4)
 		if addr != self.getClientAddress():
 			return 4
@@ -116,37 +115,32 @@ class Server:
 			return 5
 		elif msg[0] == "box":
 			self.msgIsBox()
-			return 4
 		elif msg[0] == "trash":
 			self.msgIsTrash()
-			return 4
 		elif msg[0] == "SEND":
 			self.msgIsSend(msg[1:])
 			self.sendMsg("ACK")
-			return 4
 		elif msg[0] == "GET":
 			self.msgIsGet(msg[1])
-			return 4
 		elif msg[0] == self.getLogin():
 			self.sendMsg("ACK")
-			return 4
 		elif msg[0] == "IHB":
 			self.sendMsg("ACK")
 			return 2
 		elif msg[0] == "DEL":
-			delId = msg[1]
-
+			self.delMsg(msg[1])
+			self.sendMsg("ACK")
 			#chamar função que move uma mensagem da caixa de entrada para a lixeira
-			return 4
+		return 4
 
 	def delMsg(self, delId):
-		(subjects, bodys) = handleMsg.handleBox(self.getLogin())
-		(trashSubjects, trashBodys) = handleMsg.handleTrash(self.getLogin())
+		handleMsg.handleDel(self.delMails[int(delId)], self.getLogin())
 		#excluir o email da pasta 
 
 
 	def msgIsTrash(self):
 		(trashSubjects, trashBodys) = handleMsg.handleTrash(self.getLogin())
+		print(trashBodys)
 		self.setBody(trashBodys)
 		self.sendSubjects(trashSubjects)
 
@@ -160,8 +154,9 @@ class Server:
 	
 	
 	def msgIsBox(self):
-		(subjects, bodys) = handleMsg.handleBox(self.getLogin())
+		(subjects, bodys, delBodys) = handleMsg.handleBox(self.getLogin())
 		self.setBody(bodys)
+		self.setDelBody(delBodys)
 		self.sendSubjects(subjects)
 			
 			
@@ -176,11 +171,21 @@ class Server:
 			return 5
 		self.setClientAddress()
 		self.setLogin()
+		self.setBody()
+		self.setDelBody()
 		return 1
 		
 	
 	def setBody(self, msg = {}):
 		self.bodys = msg
+	
+	
+	def setDelBody(self, msg = {}):
+		self.delMails = msg
+	
+	
+	def getDelBody(self):
+		return self.delMails
 	
 	
 	def getBody(self):
