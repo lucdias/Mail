@@ -10,9 +10,9 @@ class Client:
 	dnsAddress = (dnsIP, dnsPort)
 	def __init__(self, sock = None):
 	    if sock is None:
-	        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-	        self.sock.settimeout(0.5)
+	        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	        self.setServerAddress()
+	        self.sock2 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	    else:
 	    	self.sock = sock
 	
@@ -29,20 +29,11 @@ class Client:
 		if self.serverName == None:
 			self.setServerIP(self.getFromDns(serverName))
 			self.setServerAddress()
-		self.sendMessage("IHB")
-		serverMsg = self.recvMsg()
-		return serverMsg	
+		self.sock.connect(self.serverAddress)
 	
 	
 	def disconnectClient(self):
 		self.sendMessage("IOB")
-		serverMsg = self.recvMsg()
-		count = 0
-		while serverMsg != "IOB" and count < 3:
-			self.sendMessage("IOB")
-			serverMsg = self.recvMsg()
-			count += 1
-		return "User desconnected"
 		
 	
 	def createPackets(self, msg):
@@ -54,38 +45,29 @@ class Client:
 
 	def sendMessage(self, msg):
 		message = self.createPackets(msg)
-		print(self.serverAddress)
 		for sendMsg in message:
-			self.sock.sendto(bytes(sendMsg, encoding='utf8'), self.serverAddress)
+			print(sendMsg)
+			self.sock.send(bytes(sendMsg, encoding='utf8'))
 	
 	
 	def recvMsg(self):
-		count = 0
-		try:
-			(msg, addr) = self.sock.recvfrom(2048)
-		except socket.timeout:
-			return "timeout"
-		else:
-			return msg.decode("utf-8")
+		msg = self.sock.recv(2048)
+		return msg.decode("utf-8")
 
 	
 	def recvSub(self):
-		count = 0
-		try:
-			(msg, addr) = self.sock.recvfrom(2048)
-		except socket.timeout:
-			return "timeout"
-		else:
-			return msg
+		msg = self.sock.recv(2048)
+		print(msg)
+		return msg
 	
 	
 	def getFromDns(self, serverName):
 		sendMsg = "WHO " + serverName
 		print(sendMsg)
-		self.sock.sendto(bytes(sendMsg, encoding='utf8'), self.dnsAddress)
-		IP = self.recvMsg()
-		print(IP)
-		return IP
+		self.sock2.sendto(bytes(sendMsg, encoding='utf8'), self.dnsAddress)
+		(IP, addr) = self.sock2.recvfrom(2048)
+		print(IP.decode())
+		return IP.decode()
 		
 	
 	def setServerIP(self, IP):
