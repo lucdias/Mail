@@ -22,7 +22,6 @@ class Mail(tk.Tk):
 
 	def connect(self):
 		statusConnection = self.socket.connectClient(self.serverName)
-		print(statusConnection)
 		count = 0
 		while count < 3 and statusConnection == "timeout":
 			statusConnection = self.socket.connectClient(self.serverName)
@@ -80,6 +79,7 @@ class Mail(tk.Tk):
 			count += 1
 		if msg == "timeout":
 			return "Server unavailable"
+		print(f"Recebeu: {pickle.loads(msg)}\n")
 		self.subjects = pickle.loads(msg)
 		return "Sucess"
 	
@@ -93,6 +93,7 @@ class Mail(tk.Tk):
 			count += 1
 		if msg == "timeout":
 			return "Server unavailable"
+		print(f"Recebeu: {pickle.loads(msg)}\n")
 		self.subjects = pickle.loads(msg)
 		return "Sucess"
 	

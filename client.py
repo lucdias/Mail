@@ -54,7 +54,7 @@ class Client:
 
 	def sendMessage(self, msg):
 		message = self.createPackets(msg)
-		print(self.serverAddress)
+		print(f"Enviou: {message}\n")
 		for sendMsg in message:
 			self.sock.sendto(bytes(sendMsg, encoding='utf8'), self.serverAddress)
 	
@@ -63,6 +63,7 @@ class Client:
 		count = 0
 		try:
 			(msg, addr) = self.sock.recvfrom(2048)
+			print(f"Recebeu: {msg.decode('utf-8')}\n")
 		except socket.timeout:
 			return "timeout"
 		else:
@@ -82,10 +83,8 @@ class Client:
 	def getFromDns(self, serverName):
 		sendMsg = "WHO " + serverName
 		print(sendMsg)
-		print(self.dnsAddress)
 		self.sock.sendto(bytes(sendMsg, encoding='utf8'), self.dnsAddress)
 		IP = self.recvMsg()
-		print(IP)
 		return IP
 		
 	

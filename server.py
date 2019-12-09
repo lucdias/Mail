@@ -51,17 +51,19 @@ class Server:
 	
 	
 	def sendMsg(self, msg):
+		print(f"Enviou: {msg}\n")
 		self.sock.sendto(bytes(msg, encoding='utf8'), self.getClientAddress())
 	
 	
 	def sendSubjects(self, subjects):
+		print(f"Enviou: {subjects}\n")
 		self.sock.sendto(pickle.dumps(subjects), self.getClientAddress())
 	
 	
 	def recvMsg(self):
 		try:
 			(messageRecv, clientAddress) = self.sock.recvfrom(2048)
-			print(messageRecv.decode())
+			print(f"Recebeu: {messageRecv.decode()}\n")
 		except socket.timeout:
 			return ("timeout", "0.0.0.0")
 		else:
@@ -139,7 +141,6 @@ class Server:
 
 	def msgIsTrash(self):
 		(trashSubjects, trashBodys) = handleMsg.handleTrash(self.getLogin())
-		print(trashBodys)
 		self.setBody(trashBodys)
 		self.sendSubjects(trashSubjects)
 
