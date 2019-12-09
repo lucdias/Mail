@@ -12,13 +12,6 @@ class Mail:
 	mailsBody = {}
 	subjects = []
 	
-	@staticmethod
-	def putIntoMailBox(msg):	
-		if msg != constant.noMail:
-			tempMsg = msg.split()
-			fMsg = open(f"{constant.path}/{tempMsg[0]}.txt", "w")
-			fMsg.write(msg)
-			fMsg.close()
 
 	def setUser(self, user):
 		self.user = user
@@ -27,25 +20,6 @@ class Mail:
 	def getUser(self):
 		return self.user
 
-
-	@staticmethod
-	def countMails():
-		count = 0
-		with os.scandir(constant.path) as it:
-			for i in it:
-				count += 1
-		return count
-
-
-	@staticmethod
-	def readMailBox():
-		with os.scandir(constant.path) as it:
-			for entry in it:
-				if entry.is_file():
-					fMsg = open(constant.path + "/" + entry.name, "r")
-					print(fMsg.read())
-					print("\n")
-					fMsg.close()
 
 	#modularizar melhor essa parte
 	def connect(self):
