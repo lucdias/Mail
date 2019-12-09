@@ -23,10 +23,10 @@ class Server:
 	def __init__(self, sock = None):
 		if sock is None:
 			self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-			self.sock.bind((socket.gethostname(), self.serverPort))
+			self.sock.bind(("192.168.0.108", self.serverPort))
 			self.sock.listen(1)
 			self.sock2 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-			self.sock2.bind((socket.gethostname(), 7778))
+			self.sock2.bind(("192.168.0.108", 7778))
 		else:
 			self.sock = sock
 
@@ -83,7 +83,7 @@ class Server:
 	
 	
 	def sendDns(self):
-		self.dnsAddress = "192.168.0.13"
+		self.dnsAddress = "192.168.0.108"
 		msg = "REG " + "rafamail.com.br"
 		self.sock2.sendto(bytes(msg, encoding='utf8'), (self.dnsAddress,self.dnsPort))
 		return 1
@@ -92,6 +92,7 @@ class Server:
 	def waitMsgs(self):
 		(msg) = self.recvMsg()
 		msg = msg.split("///", 4)
+		print(msg[0])
 		if msg[0] == "IOB":
 			return 5
 		elif msg[0] == "box":

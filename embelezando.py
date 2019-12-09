@@ -23,7 +23,7 @@ class Server:
 	def __init__(self, sock = None):
 		if sock is None:
 			self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-			self.sock.bind((socket.gethostname(), self.serverPort))
+			self.sock.bind(("192.168.0.108", self.serverPort))
 			self.sock.settimeout(5.0)
 		else:
 			self.sock = sock
@@ -99,7 +99,7 @@ class Server:
 	
 	
 	def sendDns(self):
-		self.dnsAddress = "192.168.0.13"
+		self.dnsAddress = "192.168.0.108"
 		msg = "REG " + "rafamail.com.br"
 		print(self.dnsAddress)
 		self.sock.sendto(bytes(msg, encoding='utf8'), (self.dnsAddress,self.dnsPort))
@@ -211,4 +211,3 @@ while True:
 	state = msf[state]()
 	if state == "timeout":
 		count += 1
-		
