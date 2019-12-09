@@ -23,10 +23,10 @@ class Server:
 	def __init__(self, sock = None):
 		if sock is None:
 			self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-			self.sock.bind(("192.168.0.108", self.serverPort))
+			self.sock.bind(("172.22.39.144", self.serverPort))
 			self.sock.listen(1)
 			self.sock2 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-			self.sock2.bind(("192.168.0.108", 7778))
+			self.sock2.bind(("172.22.39.144", 7778))
 		else:
 			self.sock = sock
 
@@ -83,7 +83,7 @@ class Server:
 	
 	
 	def sendDns(self):
-		self.dnsAddress = "192.168.0.108"
+		self.dnsAddress = "172.22.39.144"
 		msg = "REG " + "rafamail.com.br"
 		self.sock2.sendto(bytes(msg, encoding='utf8'), (self.dnsAddress,self.dnsPort))
 		return 1
@@ -107,6 +107,7 @@ class Server:
 			self.delMsg(msg[1])
 			#chamar função que move uma mensagem da caixa de entrada para a lixeira
 		return 4
+
 
 	def delMsg(self, delId):
 		handleMsg.handleDel(self.delMails[int(delId)], self.getLogin())
@@ -161,6 +162,7 @@ class Server:
 	def getBodyById(self, index):
 		return self.bodys[int(index)]
 		
+		
 server = Server()
 
 msf = {
@@ -175,6 +177,4 @@ state = 0
 count = 0
 while True:
 	state = msf[state]()
-	if state == "timeout":
-		count += 1
 		

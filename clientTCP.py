@@ -5,7 +5,7 @@ class Client:
 	serverName = None
 	serverPort = 7777
 	dnsPort = 12000
-	dnsIP = "192.168.0.108"
+	dnsIP = "172.22.39.144"
 	serverAddress = None
 	dnsAddress = (dnsIP, dnsPort)
 	def __init__(self, sock = None):
@@ -35,6 +35,8 @@ class Client:
 	
 	def disconnectClient(self):
 		self.sendMessage("IOB")
+		self.sock.close()
+		self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		
 	
 	def createPackets(self, msg):

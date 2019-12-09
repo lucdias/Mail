@@ -10,7 +10,7 @@ class dns:
     def __init__(self, sock = None):
         if sock is None:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            self.sock.bind(("192.168.0.108", self.dnsServerPort))
+            self.sock.bind(("172.22.39.144", self.dnsServerPort))
         else:
             self.sock = sock
    

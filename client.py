@@ -5,7 +5,7 @@ class Client:
 	serverName = None
 	serverPort = 7777
 	dnsPort = 12000
-	dnsIP = "192.168.0.108"
+	dnsIP = "172.22.39.144"
 	serverAddress = None
 	dnsAddress = (dnsIP, dnsPort)
 	def __init__(self, sock = None):

@@ -12,14 +12,7 @@ class Mail(tk.Tk):
 	qntMails = None
 	mailsBody = {}
 	subjects = []
-	
-	@staticmethod
-	def putIntoMailBox(msg):	
-		if msg != constant.noMail:
-			tempMsg = msg.split()
-			fMsg = open(f"{constant.path}/{tempMsg[0]}.txt", "w")
-			fMsg.write(msg)
-			fMsg.close()
+
 
 	def setUser(self, user):
 		self.user = user
@@ -28,25 +21,6 @@ class Mail(tk.Tk):
 	def getUser(self):
 		return self.user
 
-
-	@staticmethod
-	def countMails():
-		count = 0
-		with os.scandir(constant.path) as it:
-			for i in it:
-				count += 1
-		return count
-
-
-	@staticmethod
-	def readMailBox():
-		with os.scandir(constant.path) as it:
-			for entry in it:
-				if entry.is_file():
-					fMsg = open(constant.path + "/" + entry.name, "r")
-					print(fMsg.read())
-					print("\n")
-					fMsg.close()
 
 	#modularizar melhor essa parte
 	def connect(self):
@@ -66,10 +40,6 @@ class Mail(tk.Tk):
 		print("estou desconectando")
 		self.socket.disconnectClient()
 	
-	
-	def eraseMail(self):
-		raise NotImplementedError
-
 
 	def setQntMails(self, numMail):
 		self.qntMails = numMail
@@ -110,11 +80,25 @@ class Mail(tk.Tk):
 		
 
 
+class conectServer(tk.Frame):
+	def __init__(self, parent, controller):
+		tk.Frame.__init__(self,parent)
+		label = tk.Label(self, text="Conectar com o servidor")
+		label.pack(pady=100,padx=100)
+
+		txtfld=tk.Entry(self, text="Nome", bd=5)
+		txtfld.pack()
+
+		button = tk.Button(self, text="Conectar",command=lambda: controller.conectar(txtfld.get()))
+		button.pack()
+		
 class login(tk.Frame):
 	def __init__(self, parent, controller):
 		tk.Frame.__init__(self,parent)
 		print("comecei o login")
-		label = tk.Label(self, text="Entrar no Email")
+		label = tk.Label(self, text=Mail.serverName)
+		label.pack(pady=50,padx=50)
+		label = tk.Label(self, text="Digite seu login")
 		label.pack(pady=100,padx=100)
 
 		txtfld=tk.Entry(self, text="Login", bd=5)
@@ -143,8 +127,12 @@ class lista(tk.Frame):
 		y = 0.2
 		index = 0
 		if not Mail.subjects:
-			self.deEassunto = tk.Label(self, text="Caixa de Entrada Vazia")
-			self.deEassunto.place(relx = 0.0, rely = y, anchor='sw')
+			if lixeira == False:
+				self.deEassunto = tk.Label(self, text="Caixa de Entrada Vazia")
+				self.deEassunto.place(relx = 0.0, rely = y, anchor='sw')
+			else:
+				self.deEassunto = tk.Label(self, text="Lixeira Vazia")
+				self.deEassunto.place(relx = 0.0, rely = y, anchor='sw')
 		else:
 			for msg in Mail.subjects:
 				self.deEassunto = tk.Label(self, text="De: "+msg[0]+"          Assunto: "+msg[1])
@@ -218,28 +206,35 @@ class Interface(tk.Tk):
 		self.container.grid_rowconfigure(0, weight=1)
 		self.container.grid_columnconfigure(0, weight=1)
 
-
+		#Tela de conexao com o servidor
+		self.frameServidor = conectServer(self.container, self)
+		self.frameServidor.grid(row=0, column=0, sticky="nsew")
+		self.frameServidor.tkraise();
+	
+	def conectar(self, serverName):
+		Mail.serverName = serverName
+		
 		#Tela de Login
 		self.frameLogin = login(self.container, self)
 		self.frameLogin.grid(row=0, column=0, sticky="nsew")
-		self.frameLogin.tkraise()
-
+		self.frameLogin.tkraise();
+		
 	def logar(self, loginName):
 		Mail.setUser(Mail, loginName)
 		print(Mail.connect(Mail))
 		time.sleep(1)
 		Mail.attMailBox(Mail)
-
+		
 		self.frameLista = lista(self.container, self, False)
 		self.frameLista.grid(row=0, column=0, sticky="nsew")
-		self.frameLista.tkraise()
+		self.frameLista.tkraise();
 
 	def deslogar(self):
 		Mail.disconnect(Mail)
-		exit()
-		'''self.frameLogin = login(self.container, self)
+		
+		self.frameLogin = login(self.container, self)
 		self.frameLogin.grid(row=0, column=0, sticky="nsew")
-		self.frameLogin.tkraise()'''
+		self.frameLogin.tkraise()
 
 	def lerEmail(self, index, lixeira, subject):
 		self.frameLendoEmail = lendoEmail(self.container, self, index, lixeira, subject)
