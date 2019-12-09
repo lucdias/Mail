@@ -5,7 +5,7 @@ class Client:
 	serverName = None
 	serverPort = 7777
 	dnsPort = 12000
-	dnsIP = "192.168.0.13"
+	dnsIP = "172.22.39.144"
 	serverAddress = None
 	dnsAddress = (dnsIP, dnsPort)
 	def __init__(self, sock = None):
@@ -54,7 +54,6 @@ class Client:
 
 	def sendMessage(self, msg):
 		message = self.createPackets(msg)
-		print(self.serverAddress)
 		for sendMsg in message:
 			self.sock.sendto(bytes(sendMsg, encoding='utf8'), self.serverAddress)
 	
@@ -84,7 +83,6 @@ class Client:
 		print(sendMsg)
 		self.sock.sendto(bytes(sendMsg, encoding='utf8'), self.dnsAddress)
 		IP = self.recvMsg()
-		print(IP)
 		return IP
 		
 	

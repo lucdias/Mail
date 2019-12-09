@@ -83,7 +83,7 @@ class Server:
 	
 	
 	def sendDns(self):
-		self.dnsAddress = "192.168.0.13"
+		self.dnsAddress = "172.22.39.144"
 		msg = "REG " + "rafamail.com.br"
 		self.sock2.sendto(bytes(msg, encoding='utf8'), (self.dnsAddress,self.dnsPort))
 		return 1
