@@ -125,7 +125,7 @@ class Server:
 		elif msg[0] == self.getLogin():
 			self.sendMsg("ACK")
 		elif msg[0] == "IHB":
-			self.sendMsg("ACK")
+			self.sendMsg("IHB")
 			return 2
 		elif msg[0] == "DEL":
 			self.delMsg(msg[1])
@@ -203,7 +203,7 @@ msf = {
 	2 : server.waitLogin,
 	4 : server.waitMsgs,
 	5 : server.reset
-}	
+}
 
 state = 0
 count = 0
